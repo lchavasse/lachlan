@@ -13,13 +13,13 @@ interface SocialProps {
     className?: string;
   }
 
-export default function Social({ link, children }: SocialProps) {
+export default function Social({ link, children, className }: SocialProps) {
     return (
     <a
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-16 h-16 md:w-24 md:h-24 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+        className={`w-16 h-16 md:w-24 md:h-24 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors ${className || ''}`}
     >
         {/* Check if children is a p tag */}
         {React.isValidElement(children) && children.type === 'p' ? (

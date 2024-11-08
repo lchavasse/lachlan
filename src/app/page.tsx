@@ -54,7 +54,7 @@ export default function Component() {
               <Social link="https://linkedin.com/in/lchavasse">{icons.linkedin}</Social>
               <Social link="https://medium.com/@lachlan.chavasse">{icons.medium}</Social>
               <Social link="mailto:lachlan.chavasse@gmail.com">{icons.mail}</Social>
-              <Social link="/cv.pdf" className="hidden md:block">{icons.cv}</Social>
+              <Social link="/cv.pdf" className="hidden md:flex">{icons.cv}</Social>
             </div>
 
             {/* Daily */}
