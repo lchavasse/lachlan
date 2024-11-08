@@ -20,7 +20,7 @@ export default function Social({ link, children }: SocialProps) {
         className="w-16 h-16 md:w-24 md:h-24 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
     >
         {/* Check if children is a p tag */}
-        {typeof children === 'object' && 'type' in children && children.type === 'p' ? (
+        {typeof children === 'object' && 'type' in (children as any) && (children as any).type === 'p' ? (
             children
         ) : (
             <svg className="w-8 h-8 md:w-12 md:h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
