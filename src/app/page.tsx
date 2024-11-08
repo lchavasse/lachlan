@@ -39,7 +39,7 @@ export default function Component() {
             {/* Hero section */}
             <Block>
               <h1 className="text-3xl @md:text-5xl font-bold text-white mb-4 font-sans">
-                Hello, I'm Lachlan.
+                {"Hello, I'm Lachlan."}
               </h1>
               <p className="text-white/80 font-bold">
                 Committed.
@@ -53,9 +53,9 @@ export default function Component() {
 
             {/* Social Icons */}
             <div className="flex justify-center gap-6">
-              <Social link="https://linkedin.com/in/lchavasse" children={icons.linkedin} />
-              <Social link="https://medium.com/@lachlan.chavasse" children={icons.medium} />
-              <Social link="mailto:lachlan.chavasse@gmail.com" children={icons.mail} />
+              <Social link="https://linkedin.com/in/lchavasse">{icons.linkedin}</Social>
+              <Social link="https://medium.com/@lachlan.chavasse">{icons.medium}</Social>
+              <Social link="mailto:lachlan.chavasse@gmail.com">{icons.mail}</Social>
             </div>
 
             {/* Daily */}
