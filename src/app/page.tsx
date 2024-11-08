@@ -42,9 +42,7 @@ export default function Component() {
                 {"Hello, I'm Lachlan."}
               </h1>
               <p className="text-white/80 font-bold">
-                Committed.
-                Creative.
-                Curious.
+                Operator. Creator. Innovator.
               </p>
               <p className="text-white/80 italic">
                 Enhancing user experiences by developing user-centric products and leveraging cutting-edge technologies.
@@ -56,6 +54,7 @@ export default function Component() {
               <Social link="https://linkedin.com/in/lchavasse">{icons.linkedin}</Social>
               <Social link="https://medium.com/@lachlan.chavasse">{icons.medium}</Social>
               <Social link="mailto:lachlan.chavasse@gmail.com">{icons.mail}</Social>
+              <Social link="/cv.pdf" className="hidden md:block">{icons.cv}</Social>
             </div>
 
             {/* Daily */}
