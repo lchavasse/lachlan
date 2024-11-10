@@ -59,10 +59,12 @@ export default function Component() {
 
             {/* Daily */}
             <Block>
-              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">daily.</h2>
-              <p className="text-white/80 italic">
-                An AI powered diary that helps you reflect, learn, and grow.
-              </p>
+              <a href="https://daily.lachlan.xyz/" target="_blank" rel="noopener noreferrer">
+                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">daily.</h2>
+                <p className="text-white/80 italic">
+                  An AI powered diary that helps you reflect, learn, and grow.
+                </p>
+              </a>
             </Block>
 
             {/* Review */}
