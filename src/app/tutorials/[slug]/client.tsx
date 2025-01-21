@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Block from '../../components/block'
 import { MDXProvider } from '@mdx-js/react';
 import { useMDXComponents } from '../../../mdx-components';
 
@@ -16,7 +15,7 @@ interface BlogPostClientProps {
 
 export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) {
   const components = useMDXComponents({});
-  const [PostContent, setPostContent] = useState<any>(null);
+  const [PostContent, setPostContent] = useState<React.FC | null>(null);
 
   useEffect(() => {
     import(`../posts/${slug}.mdx`)

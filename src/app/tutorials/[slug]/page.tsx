@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -24,9 +26,10 @@ interface Frontmatter {
   date: string;
 }
 
+
 // The page component for rendering a specific post
-export default async function Page({ params }: { params: { slug: string } }) {
-  const slug = params.slug
+export default async function Page(props: any) {
+  const slug = props.params.slug
   const filePath = path.join(process.cwd(), 'src/app/tutorials/posts', `${slug}.mdx`)
   const fileContents = fs.readFileSync(filePath, 'utf8')
 

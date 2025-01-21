@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Block from '../../components/block'
 import { MDXProvider } from '@mdx-js/react';
 import { useMDXComponents } from '../../../mdx-components';
 
@@ -16,7 +15,7 @@ interface BlogPostClientProps {
 
 export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) {
   const components = useMDXComponents({});
-  const [PostContent, setPostContent] = useState<any>(null);
+  const [PostContent, setPostContent] = useState<React.FC | null>(null);
 
   useEffect(() => {
     import(`../posts/${slug}.mdx`)
@@ -53,9 +52,9 @@ export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) 
         <main className="container mx-auto px-6 py-4 max-w-4xl">
           <div className="bg-black/80 backdrop-blur-md p-8 rounded-xl border-2 border-transparent relative">
             <Link
-              href="/tutorials"
+              href="/blog"
               className="absolute top-6 right-6 text-white/80 w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 transition-colors text-2xl"
-              aria-label="Back to tutorials"
+              aria-label="Back to blog"
             >
               ←
             </Link>

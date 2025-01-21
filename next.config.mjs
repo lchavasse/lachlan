@@ -28,13 +28,14 @@ const nextConfig = {
     NEXT_TELEMETRY_DISABLED: '1',
   },
   // Exclude admin routes from static export
-  /* NEED TO ADD THIS SOON '/blog': { page: '/blog' },*/
-  exportPathMap: async function () {
-    const paths = {
-      '/': { page: '/' },
-      '/tutorials': { page: '/tutorials' }
-    };
-    return paths;
+  skipTrailingSlashRedirect: true,
+  skipMiddlewareUrlNormalize: true,
+  distDir: '.next',
+  // This will exclude the admin routes from being statically generated
+  excludeDefaultMomentLocales: true,
+  experimental: {
+    // This excludes specific routes from static generation
+    excludeRoutes: ['/admin', '/admin/editor']
   }
 };
 

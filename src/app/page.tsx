@@ -25,6 +25,7 @@ function useMediaQuery(query: string) {
 
 export default function Component() {
   const [scrollY, setScrollY] = useState(0)
+  const [menuOpen, setMenuOpen] = useState(false)
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   useEffect(() => {
@@ -70,21 +71,38 @@ export default function Component() {
       <div className="relative z-10">
         {/* Navigation */}
         <nav className="p-6 flex justify-between items-center">
-          <Link href="/" className="text-white hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded flex items-center justify-center">
-              △
-            </div>
-          </Link>
-          {/*}
-          <div className="flex gap-6">
-            <Link href="/work" className="text-white hover:opacity-80 transition-opacity">
-              Work
-            </Link>
-            <Link href="/about" className="text-white hover:opacity-80 transition-opacity">
-              About
-            </Link>
+          <div className="relative">
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-white hover:opacity-80 transition-opacity"
+            >
+              <div className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded flex items-center justify-center">
+                {menuOpen ? '×' : '≡'}
+              </div>
+            </button>
+            
+            {/* Dropdown Menu */}
+            {menuOpen && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white/10 backdrop-blur-md rounded-lg shadow-lg overflow-hidden">
+                <div className="py-1">
+                  <Link 
+                    href="/tutorials" 
+                    className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Tutorials
+                  </Link>
+                  <Link 
+                    href="/blog" 
+                    className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Blog
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
-          */}
         </nav>
 
         {/* Main content */}

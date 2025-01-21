@@ -58,7 +58,7 @@ export default async function BlogPage() {
              transition-all duration-300 ease-in-out
              text-lg md:text-xl">
             <h1 className="text-3xl @md:text-5xl font-bold pl-6 text-white mb-8">
-              Tutorials:
+              Blog:
             </h1>
             
             <div className="space-y-8">
