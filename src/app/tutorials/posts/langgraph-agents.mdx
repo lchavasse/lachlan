@@ -1,14 +1,12 @@
 ---
 title: "Getting Started with Langgraph Agents"
-date: "2025-01-13"
+date: "2025-01-03"
 description: "Getting Started with Langgraph Agents"
 ---
 
-# Getting Started with Langgraph Agents
-
 As with all AI projects, we’re going to need a few API keys.
 
-For this tutorial we’re using Anthropic and [Tavily](https://tavily.com/).
+For this tutorial we’re using [Anthropic](https://console.anthropic.com/) and [Tavily](https://tavily.com/).
 
 Once API keys are obtained they need to be imported into the project.
 
@@ -149,7 +147,7 @@ from IPython.display import Image, display
 display(Image(graph.get_graph().draw_mermaid_png()))
 ```
 
-![image.png](Getting%20Started%20with%20Langgraph%20Agents%201770a140a5228089a870ebea7d088023/image.png)
+![Langgraph State Machine Visualization](/images/langgraph-tool-agent.png)
 
 Then all we have to do is invoke the graph. To do this we stream the response, so that we get them one-at-a-time as soon as they’re generated.
 
@@ -257,9 +255,9 @@ We simple add this to our tools array and the agent will choose which tool to us
 llm_with_tools = llm.bind_tools(tools)
 ```
 
-The full code for the agent can be found here: 
+The full code for the agent can be found here: [https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py](https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py)
 
-https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py
+---
 
 ## Postscript
 

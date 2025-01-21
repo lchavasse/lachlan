@@ -1,0 +1,64 @@
+---
+title: "Why LangGraph?"
+date: "2025-01-02"
+description: "Why LangGraph?"
+---
+<div style={{ display: 'flex', alignItems: 'center' }}>
+  <img src="/images/langgraph-tool-agent.png" alt="LangGraph Agent" style={{ width: '50%', marginRight: '10px' }} />
+  <span>LangGraph provides a way to visualise agents as <a href="https://en.wikipedia.org/wiki/State_diagram">state graphs</a>. This makes designing and debugging complex multi-agent systems remarkably simple. Using the prebuilt functions, it is easy to setup a basic ReAct agent in just a few lines of code (below). However, the framework is highly customisable, allowing for rapid development of modular agentic systems.</span>
+</div>
+
+```python
+from langgraph.prebuilt import create_react_agent
+from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_anthropic import ChatAnthropic
+
+import dotenv
+dotenv.load_dotenv()
+
+llm = ChatAnthropic(model="claude-3-5-haiku-latest")
+tavily_tool = TavilySearchResults(max_results=2)
+
+# Define the agent using create_react_agent
+agent = create_react_agent(model=llm, tools=[tavily_tool])
+
+agent.invoke({"messages": [("user", "what is the weather in sf")]})
+
+########### RESPONSE ##############
+"""{'messages': [HumanMessage(content='what is the weather in sf', additional_kwargs={}, response_metadata={}, id='a4d0473e-d80f-4f46-bc40-058648116697'),
+  AIMessage(content=[{'text': "Let me help you find the current weather information for San Francisco. I'll use the Tavily search to get the most recent weather details.", 'type': 'text'}, {'id': 'toolu_01FZ5roVZd3NDWZkZD3xYLDe', 'input': {'query': 'current weather in San Francisco today'}, 'name': 'tavily_search_results_json', 'type': 'tool_use'}], additional_kwargs={}, response_metadata={'id': 'msg_012TkRdGgM2bNrd2KSrU4mHE', 'model': 'claude-3-5-haiku-20241022', 'stop_reason': 'tool_use', 'stop_sequence': None, 'usage': {'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 373, 'output_tokens': 93}}, id='run-fed4e219-75d8-433e-b5f1-d663e8954103-0', tool_calls=[{'name': 'tavily_search_results_json', 'args': {'query': 'current weather in San Francisco today'}, 'id': 'toolu_01FZ5roVZd3NDWZkZD3xYLDe', 'type': 'tool_call'}], usage_metadata={'input_tokens': 373, 'output_tokens': 93, 'total_tokens': 466, 'input_token_details': {'cache_read': 0, 'cache_creation': 0}}),
+  ToolMessage(content='[{"url": "https://www.weatherapi.com/", "content": "{\'location\': {\'name\': \'San Francisco\', \'region\': \'California\', \'country\': \'United States of America\', \'lat\': 37.775, \'lon\': -122.4183, \'tz_id\': \'America/Los_Angeles\', \'localtime_epoch\': 1737030637, \'localtime\': \'2025-01-16 04:30\'}, \'current\': {\'last_updated_epoch\': 1737030600, \'last_updated\': \'2025-01-16 04:30\', \'temp_c\': 7.2, \'temp_f\': 45.0, \'is_day\': 0, \'condition\': {\'text\': \'Clear\', \'icon\': \'//cdn.weatherapi.com/weather/64x64/night/113.png\', \'code\': 1000}, \'wind_mph\': 5.1, \'wind_kph\': 8.3, \'wind_degree\': 45, \'wind_dir\': \'NE\', \'pressure_mb\': 1024.0, \'pressure_in\': 30.23, \'precip_mm\': 0.0, \'precip_in\': 0.0, \'humidity\': 80, \'cloud\': 0, \'feelslike_c\': 5.7, \'feelslike_f\': 42.2, \'windchill_c\': 9.0, \'windchill_f\': 48.3, \'heatindex_c\': 9.7, \'heatindex_f\': 49.5, \'dewpoint_c\': 8.3, \'dewpoint_f\': 47.0, \'vis_km\': 16.0, \'vis_miles\': 9.0, \'uv\': 0.0, \'gust_mph\': 9.6, \'gust_kph\': 15.5}}"}, {"url": "https://www.easeweather.com/north-america/united-states/california/city-and-county-of-san-francisco/san-francisco/january", "content": "January 2025 Weather - San Francisco Weather in San Francisco for January 2025 Your guide to San Francisco weather in January - trends and predictions In general, the average temperature in San Francisco at the beginning of January is 13\xa0°F. San Francisco experiences heavy rainfall in January, with over 20 rainy days and an average total precipitation 110.4\xa0mm. New Year\'s Day weather in San Francisco 🎉 - See the complete forecast for Monday, January 1. San Francisco in January average weather Temperatures trend during January in San Francisco San Francisco in January - FAQ Explore the daily rainfall trends and prepare for San Franciscos January weather\xa0💧 Get accurate weather forecasts for San Francisco, located at latitude 37.775 and longitude -122.419."}]', name='tavily_search_results_json', id='9ac5c167-9c9c-4c83-98a6-63f9a3d0ee01', tool_call_id='toolu_01FZ5roVZd3NDWZkZD3xYLDe', artifact={'query': 'current weather in San Francisco today', 'follow_up_questions': None, 'answer': None, 'images': [], 'results': [{'title': 'Weather in San Francisco', 'url': 'https://www.weatherapi.com/', 'content': "{'location': {'name': 'San Francisco', 'region': 'California', 'country': 'United States of America', 'lat': 37.775, 'lon': -122.4183, 'tz_id': 'America/Los_Angeles', 'localtime_epoch': 1737030637, 'localtime': '2025-01-16 04:30'}, 'current': {'last_updated_epoch': 1737030600, 'last_updated': '2025-01-16 04:30', 'temp_c': 7.2, 'temp_f': 45.0, 'is_day': 0, 'condition': {'text': 'Clear', 'icon': '//cdn.weatherapi.com/weather/64x64/night/113.png', 'code': 1000}, 'wind_mph': 5.1, 'wind_kph': 8.3, 'wind_degree': 45, 'wind_dir': 'NE', 'pressure_mb': 1024.0, 'pressure_in': 30.23, 'precip_mm': 0.0, 'precip_in': 0.0, 'humidity': 80, 'cloud': 0, 'feelslike_c': 5.7, 'feelslike_f': 42.2, 'windchill_c': 9.0, 'windchill_f': 48.3, 'heatindex_c': 9.7, 'heatindex_f': 49.5, 'dewpoint_c': 8.3, 'dewpoint_f': 47.0, 'vis_km': 16.0, 'vis_miles': 9.0, 'uv': 0.0, 'gust_mph': 9.6, 'gust_kph': 15.5}}", 'score': 0.8073138, 'raw_content': None}, {'title': 'January 2025 Weather - San Francisco', 'url': 'https://www.easeweather.com/north-america/united-states/california/city-and-county-of-san-francisco/san-francisco/january', 'content': "January 2025 Weather - San Francisco Weather in San Francisco for January 2025 Your guide to San Francisco weather in January - trends and predictions In general, the average temperature in San Francisco at the beginning of January is 13\xa0°F. San Francisco experiences heavy rainfall in January, with over 20 rainy days and an average total precipitation 110.4\xa0mm. New Year's Day weather in San Francisco 🎉 - See the complete forecast for Monday, January 1. San Francisco in January average weather Temperatures trend during January in San Francisco San Francisco in January - FAQ Explore the daily rainfall trends and prepare for San Franciscos January weather\xa0💧 Get accurate weather forecasts for San Francisco, located at latitude 37.775 and longitude -122.419.", 'score': 0.734139, 'raw_content': None}], 'response_time': 2.29}),
+  AIMessage(content=[{'text': "I apologize, but the search result appears to be for a future date (2025), which isn't helpful for getting today's current weather. Let me try another search.", 'type': 'text'}, {'id': 'toolu_01QeqowLuQHXgfMNQAmuhTP7', 'input': {'query': 'San Francisco current temperature and conditions today'}, 'name': 'tavily_search_results_json', 'type': 'tool_use'}], additional_kwargs={}, response_metadata={'id': 'msg_01X58zxPf8TcmnrUV8QNRqG5', 'model': 'claude-3-5-haiku-20241022', 'stop_reason': 'tool_use', 'stop_sequence': None, 'usage': {'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 1182, 'output_tokens': 102}}, id='run-0e62c429-724c-439e-8ab8-a730a3b96152-0', tool_calls=[{'name': 'tavily_search_results_json', 'args': {'query': 'San Francisco current temperature and conditions today'}, 'id': 'toolu_01QeqowLuQHXgfMNQAmuhTP7', 'type': 'tool_call'}], usage_metadata={'input_tokens': 1182, 'output_tokens': 102, 'total_tokens': 1284, 'input_token_details': {'cache_read': 0, 'cache_creation': 0}}),
+  ToolMessage(content='[{"url": "https://forecast.weather.gov/MapClick.php?lon=-122.4059&lat=37.80233", "content": "Critical to Extremely Critical Fire Weather Conditions in Southern California; Heavy Lake Effect Snow Downwind of Lakes Erie and Ontario ... Current conditions at SAN FRANCISCO DOWNTOWN (SFOC1) Lat: 37.77056°NLon: 122.42694°WElev: 150.0ft. NA. 51°F. 11°C. ... Today. High: 60 °F. Sunny. Tonight. Low: 45 °F. Mostly Clear. Tuesday. High: 58"}, {"url": "https://www.flightstats.com/v2/airport-conditions/SFO", "content": "Cookie Policy\\nPrivacy Policy\\nTerms of Use\\nSecurity\\nSitemap\\nCopyright Â SFO - San Francisco International Airport Current Conditions\\nPartly cloudy in the morning then becoming mostly cloudy. Highs in the mid 60s to lower 70s.\\n Highs in the mid 60s to lower 70s.\\n Highs in the lower 60s.\\n"}]', name='tavily_search_results_json', id='6a20dbe6-e091-47df-811c-63757ab93d8e', tool_call_id='toolu_01QeqowLuQHXgfMNQAmuhTP7', artifact={'query': 'San Francisco current temperature and conditions today', 'follow_up_questions': None, 'answer': None, 'images': [], 'results': [{'title': 'National Weather Service', 'url': 'https://forecast.weather.gov/MapClick.php?lon=-122.4059&lat=37.80233', 'content': 'Critical to Extremely Critical Fire Weather Conditions in Southern California; Heavy Lake Effect Snow Downwind of Lakes Erie and Ontario ... Current conditions at SAN FRANCISCO DOWNTOWN (SFOC1) Lat: 37.77056°NLon: 122.42694°WElev: 150.0ft. NA. 51°F. 11°C. ... Today. High: 60 °F. Sunny. Tonight. Low: 45 °F. Mostly Clear. Tuesday. High: 58', 'score': 0.826278, 'raw_content': None}, {'title': 'SFO - San Francisco International Airport Current Conditions - FlightStats', 'url': 'https://www.flightstats.com/v2/airport-conditions/SFO', 'content': 'Cookie Policy\nPrivacy Policy\nTerms of Use\nSecurity\nSitemap\nCopyright Â SFO - San Francisco International Airport Current Conditions\nPartly cloudy in the morning then becoming mostly cloudy. Highs in the mid 60s to lower 70s.\n Highs in the mid 60s to lower 70s.\n Highs in the lower 60s.\n', 'score': 0.79883134, 'raw_content': None}], 'response_time': 1.75}),
+  AIMessage(content="Based on the current search results, here's the weather in San Francisco:\n🌞 Temperature: Around 51°F (11°C)\n☀️ Conditions: Sunny/Partly cloudy\n🌡️ Expected High: Around 60°F\n🌙 Expected Low: Around 45°F\n\nThe weather looks pleasant today - sunny with mild temperatures. It should be a nice day in San Francisco! Remember that weather can change, so it's always good to check a local forecast for the most up-to-date information.", additional_kwargs={}, response_metadata={'id': 'msg_01VwDAmwVHbsVMVbMy8jcm39', 'model': 'claude-3-5-haiku-20241022', 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 1578, 'output_tokens': 126}}, id='run-57b19ca1-0501-434c-8247-dcf29f5219ef-0', usage_metadata={'input_tokens': 1578, 'output_tokens': 126, 'total_tokens': 1704, 'input_token_details': {'cache_read': 0, 'cache_creation': 0}})]}"""
+```
+
+LangGraph agents are built with the same components as LangChain. It is only when building the nodes and edges of the graph from these components that things start to differ. In the imports for this tutorial you will find we use models and tools from LangChain and graph and state (/memory) imports from LangGraph.
+
+Another great strength of the LangGraph system is [LangSmith](https://smith.langchain.com/). By adding 4 env variables you get automated monitoring of your agents making debugging a breeze.
+
+See also: https://langchain-ai.github.io/langgraph/concepts/high_level/
+
+---
+
+## This Tutorial
+
+Getting to grips with how these components can be pieced together will allow you to build complex custom agents in no time.
+
+The outline of the course is:
+
+1. [Basic ReAct Agent](https://www.lachlan.xyz/tutorials/langgraph-agents)
+2. [RAG Agent](https://www.notion.so/Creating-a-RAG-Agent-with-LangGraph-1780a140a52280f79726f47852163c51?pvs=21)
+3. [Multi Agent Systems](https://www.notion.so/Controlling-Multiple-Agents-17b0a140a52280c5a913f580eaaec384?pvs=21)
+4. [Realtime Voice Agents](https://www.notion.so/Realtime-Voice-The-Road-to-AI-Assistants-17d0a140a5228044a620ff0eaa1fca40?pvs=21)
+5. [World Domination](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+### **Ready? [Let’s get started.](https://www.lachlan.xyz/tutorials/langgraph-agents)**
+
+---
+
+### Postscript
+
+*The other compelling library as of January 2025 is Hugging Face [smolagents](https://huggingface.co/docs/smolagents/en/index). It is very simple and easy to build, but at this time I found it significantly slower, and the lack of customisability made this more challenging to fix.*
+
+*If you have training data to refine your agent, you could also consider [DSPy](https://dspy.ai/) which has built in prompt optimisation.*

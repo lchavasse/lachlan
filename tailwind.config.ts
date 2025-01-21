@@ -16,7 +16,15 @@ export default {
         serif: ['Crimson Pro', 'serif'],
         'sans': ['Afacad', 'sans-serif'],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: 'rgb(var(--foreground-rgb))',
+            maxWidth: '100%',
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 } satisfies Config;

@@ -1,11 +1,10 @@
-import Block from '../components/block'
 import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
 async function getBlogPosts() {
-  const postsDirectory = path.join(process.cwd(), 'src/app/tutorials/posts')
+  const postsDirectory = path.join(process.cwd(), 'src/app/blog/posts')
   const fileNames = fs.readdirSync(postsDirectory)
   
   const posts = fileNames
@@ -24,7 +23,7 @@ async function getBlogPosts() {
         description: metadata.description,
       }
     })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   
   return posts
 }
@@ -59,41 +58,37 @@ export default async function BlogPage() {
              transition-all duration-300 ease-in-out
              text-lg md:text-xl">
             <h1 className="text-3xl @md:text-5xl font-bold pl-6 text-white mb-8">
-              LangGraph Tutorial:
+              Tutorials:
             </h1>
-            <p className="text-white/60 pl-6 mb-6">
-            An introduction to building agentic systems in Python with LangGraph and LiveKit.<br />
-            The course:
-            </p>
             
-            <div className="space-y-2 flex flex-col gap-2 max-w-2xl ml-6">
-              {posts.map((post, index) => (
+            <div className="space-y-8">
+              {posts.map(post => (
                 <Link 
                   key={post.slug}
-                  href={`/tutorials/${post.slug}`}
+                  href={`/blog/${post.slug}`}
                   className="block group"
                 >
-                  <article className="pl-4 p-1 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors border border-white/10 flex gap-6 items-bottom">
-                    <div className="text-white/50 font-mono text-sm pt-1">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-                    <div>
-                      <h2 className="text-xl @md:text-2xl font-semibold text-white mb-2">
-                        {post.title}
-                      </h2>
-                      {/*
-                      <p className="text-white/60">
-                        {post.description}
-                      </p>
-                      */}
-                    </div>
+                  <article className="p-6 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors">
+                    <h2 className="text-xl @md:text-2xl font-semibold text-white mb-2">
+                      {post.title}
+                    </h2>
+                    <p className="text-white/80 text-sm mb-2">
+                      {new Date(post.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                    <p className="text-white/80 italic">
+                      {post.description}
+                    </p>
                   </article>
                 </Link>
               ))}
               
               {posts.length === 0 && (
                 <p className="text-white/80 italic">
-                  No tutorials yet. Check back soon!
+                  No blog posts yet. Check back soon!
                 </p>
               )}
             </div>
