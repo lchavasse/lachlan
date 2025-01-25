@@ -4,13 +4,19 @@ date: "2025-01-03"
 description: "Getting Started with Langgraph Agents"
 ---
 
+Our first “agent” will be a simple system where an LLM can chose to call one (or more) tools in order to answer the user’s query. (think ChatGPT searching the web). The response is then assessed by the same LLM to decide if the information is relevant and respond to the user.
+
+As outlined [earlier](https://www.lachlan.xyz/tutorials/why-langgraph), we shall be building our system in Python with LangGraph. Familiarity with Python, therefore, is important.
+
+---
+
 As with all AI projects, we’re going to need a few API keys.
 
-For this tutorial we’re using [Anthropic](https://console.anthropic.com/) and [Tavily](https://tavily.com/).
+For this tutorial we’re using [Anthropic](https://console.anthropic.com/) (for the LLM) and [Tavily](https://tavily.com/) (for Web Search).
 
 Once API keys are obtained they need to be imported into the project.
 
-If you’re working with a regular script, create a .env file in the same directory.
+If you’re working with a regular script, create a **.env** file in the same directory.
 
 ```python
 ANTHROPIC_API_KEY=sk-ant-XXX
@@ -24,9 +30,9 @@ from dotenv import load_dotenv
 load_dotenv()
 ```
 
-Langgraph works with many chat models. We’ll be using Anthropic’s Claude.
+LangGraph works with many chat models. We’ll be using Anthropic’s Claude.
 
-As per Langchain, inference is run by the method llm.invoke()
+As per LangChain, inference is run by the method `llm.invoke()`.
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -35,10 +41,13 @@ llm = ChatAnthropic(model="claude-3-5-haiku-latest")
 response = llm.invoke("How many r's are there in strawberry?")
 print(response)
 ```
+---
 
 But Langgraph starts getting fun when we introduce tools.
 
-Tavily Search is an indispensable way for models to search the web to retrieve information. It has a ready made langchain [package](https://python.langchain.com/docs/integrations/tools/tavily_search/). This can be run independently with .invoke, but we’re going to be integrating it with our agent. To do this we create a tools array and “bind” it to our llm.
+<br />
+
+Tavily Search is a simple API for searching the web to retrieve information. It has a ready made LangChain [package](https://python.langchain.com/docs/integrations/tools/tavily_search/). This can be run independently with .invoke, but we’re going to be integrating it with our agent. To do this we create a tools array and “bind” it to our llm.
 
 ```python
 search_tool = TavilySearchResults(max_results=2)
@@ -88,7 +97,7 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
 ```
 
-1. The agent function / node - to call the llm. This is passed the State to which it appends it’s response. 
+2. The agent function / node - to call the llm. This is passed the State, to which it appends it’s response. 
 
 ```python
 def agent(state: State):
@@ -98,16 +107,16 @@ def agent(state: State):
     return {"messages": [response]}
 ```
 
-1. The tool node - to run the selected tool.
+3. The tool node - to run the selected tool.
 
-For this we can use the prebuilt **ToolNode**, but a custom version is detailed in the Langgraph [Quick Start Guide](https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-2-enhancing-the-chatbot-with-tools)
+We will use the prebuilt **ToolNode**, but a custom version is detailed in the Langgraph [Quick Start Guide](https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-2-enhancing-the-chatbot-with-tools)
 
 ```python
 from langgraph.prebuilt import ToolNode
 tool_node = ToolNode(tools)
 ```
 
-1. The Tool Router function - to interface between the agent and tools, deciding if any tools need to be called:
+4. The Tool Router function - to interface between the agent and tools, deciding if any tools need to be called:
     
     *[The prebuilt [**tools_condition**](https://langchain-ai.github.io/langgraph/reference/prebuilt/#langgraph.prebuilt.tool_node.tools_condition) function can also be used]*
     
@@ -120,12 +129,17 @@ def tool_router(state: State):
         return "tools"
     return END
 ```
+---
 
-Then we build the **State Machine / Graph**.
+Now we are ready to build the **State Machine / Graph**.
 
-This involves 2 key components, nodes and edges. We have two nodes, the agent and the tools.
+<br />
 
-The edges connect the nodes. We start with then agent, then we use our tool_router function to decide if a tool should be used. If we call a tool, the result should be return to the agent which then decides whether to call another tool or end. This is a ReAct agent. You can read more about agent architecture [here](https://langchain-ai.github.io/langgraph/concepts/agentic_concepts/).
+This involves 2 key components, *nodes* and *edges*.\
+We have two nodes, the agent and the tools. The edges connect the nodes.\
+We start with then agent, then we use our *tool§_router* function to decide if a tool should be used. If we call a tool, the result should be return to the agent which then decides whether to call another tool or end. This is a ReAct agent. You can read more about agent architecture [here](https://langchain-ai.github.io/langgraph/concepts/agentic_concepts/).
+
+<br />
 
 ```python
 builder = StateGraph(State)
@@ -140,6 +154,7 @@ builder.add_edge("tools", "agent")
 graph = builder.compile()
 ```
 
+<br />
 This can be visualised (*below for within a jupyter notebook*):
 
 ```python
@@ -149,7 +164,7 @@ display(Image(graph.get_graph().draw_mermaid_png()))
 
 ![Langgraph State Machine Visualization](/images/langgraph-tool-agent.png)
 
-Then all we have to do is invoke the graph. To do this we stream the response, so that we get them one-at-a-time as soon as they’re generated.
+Then all we have to do is invoke the graph. To do this we stream the response, so that we get the messages one-at-a-time (as soon as they’re generated).
 
 ```python
 for chunk in app.stream(
@@ -158,6 +173,7 @@ for chunk in app.stream(
     chunk["messages"][-1].pretty_print()
 ```
 
+<br />
 However, if we want to create a chatbot style interaction, we can loop through this:
 
 ```python
@@ -180,6 +196,7 @@ while True:
         print("Error. Goodbye!")
         break
 ```
+---
 
 ## **Memory**
 
@@ -213,6 +230,8 @@ while True:
         break
 ```
 
+<br />
+
 However memory can be easily added with a [**checkpointer**](https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-3-adding-memory-to-the-chatbot) as follows:
 
 ```python
@@ -235,6 +254,8 @@ def stream_graph_updates(user_input: str):
 
 Further, this can be connected to a database in production applications.
 
+---
+
 ## Additional Tools
 
 We don’t have to stop at one tool. Our agent can choose the most suitable tool from those available. Custom tools can be built using the [tool class](https://python.langchain.com/docs/concepts/tools/). E.g.
@@ -255,7 +276,13 @@ We simple add this to our tools array and the agent will choose which tool to us
 llm_with_tools = llm.bind_tools(tools)
 ```
 
-The full code for the agent can be found here: [https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py](https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py)
+The full code for the agent can be found here: [Basic ReAct Agent](https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py)
+
+<br />
+
+## Mastered the ReAct Agent?
+
+Let’s step things up by giving out agent a data store - [RAG Agent](https://www.lachlan.xyz/tutorials/rag-agent-langgraph).
 
 ---
 

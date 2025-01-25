@@ -1,0 +1,144 @@
+---
+title: "Building a RAG Agent with Langgraph"
+date: "2025-01-25"
+description: "Building a RAG Agent with Langgraph"
+---
+
+# Creating a RAG Agent with LangGraph
+
+In our first [tutorial](/tutorials/langgraph-agents), we built a **ReAct Agent** that could answer our questions utilising a web search tool. But what if we have some specific information we would like to give the agent. Say a customer service application where there are set answers and procedures that should be returned. We might not always want this information in the *context / system prompt*, so are agent must be able to retrieve this information when required.
+<br />
+This is where we turn to Retrieval Augmented Generation (RAG). For this we need to set up a **database** as well as a **retriever** to fetch relevant documents from it.
+<br />
+*Now at this point, we really enter the minefield of options and packages to use. The received wisdom is to use a vectorstore for the database so that the documents can be found via semantic search - a technique that searches for similarity of database content to the query in vector space. This saves compute for larger applications, but might seem like overkill for the below example. Nevertheless, it is a good place to start learning. Pinecone give a brief introduction to the rise of vector data [here](https://www.pinecone.io/blog/rise-vector-data/)*
+
+---
+
+## Vector Data
+
+*The following gives an overview of the vector store options - feel free to skip down to the tutorial below.*
+
+There are three key things to consider for a handling vector data:
+
+1. **Database** - *where you store the vectors*
+2. **Embedding** - *how you make the vectors (from text etc.)*
+3. **Retrieval** - *how you return the vectors (back to text etc.)*
+
+### Database
+
+For full scale applications a persistent vector database will be necessary. [Pinecone](https://www.pinecone.io/) is a popular choice, but open source options like [Chroma](https://www.trychroma.com/) or [Qdrant](https://qdrant.tech/) may be preferable.
+
+For simple use cases, the embedding  can be stored in the application memory 
+
+### Embedding
+
+*There are countless embedding options, the merits of which one could study for a lifetime. Stick with a common, fast option. Try to stick with one embedding for a project. One should be careful to segment any data by different embeddings if there are used.*
+<br />
+Technically there are two parts, a **library** and a **model:**
+<br />
+The industry standard is OpenAI’s `text-embedding-3-small/large`, accessed through their library.
+<br />
+For a lightweight offline option.[`sentence transformers`](https://sbert.net/), using an open source model such as `all-MiniLM-L6-v2` 
+<br />
+Qdrant’s `fastembed` provides another lightweight option with access to more powerful open source models. We will use `BAAI/bge-base-en-v1.5` from the Beijing Academy of AI.
+
+### Retrieval
+
+If a full vector database is used, this will have an inbuilt retrieval function. These employ some form of similarity search, the choice of which can have a significant impact on your retrieval.
+
+Cosine similarity (*the normalised dot product*) is often recommended. Facebook’s [FAISS](https://github.com/facebookresearch/faiss) offers an excellent library for this.
+
+---
+
+## Tutorial
+
+For this project, we will use Langchain’s [InMemoryVectorStore](https://python.langchain.com/api_reference/core/vectorstores/langchain_core.vectorstores.in_memory.InMemoryVectorStore.html) to model a full vector store (in memory) without needing additional API keys.
+
+```python
+from langchain.docstore.document import Document
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+
+### ADD DOCUMENTS HERE ###
+
+embed_model = FastEmbedEmbeddings(model_name="BAAI/bge-base-en-v1.5")
+
+vectorstore = InMemoryVectorStore.from_documents(documents=docs,
+                                    embedding=embed_model)
+```
+
+Of course we need to add the documents. We will be using some text about the state of California found in the <a href="https://github.com/lchavasse/langgraph-tutorial/tree/51bed31a94a0e36a511063d4fec096a8a87a4388/tut-docs" target="_blank">GitHub repo</a>. We split these into smaller chunks to make the similarity search faster and more specific.
+
+```python
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false" # add this to prevent forking with HF tokenizers
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+documents = []
+for filename in os.listdir("./tut-docs"):
+    if filename.endswith(".txt"):
+        with open(os.path.join("./tut-docs", filename), "r") as file:
+            text = file.read()
+            documents.append({"content": text, "filename": filename})
+
+store_docs = [
+    Document(page_content=doc["content"], metadata={"filename": doc["filename"]})
+    for doc in documents
+]
+
+# Split the documents into chunks for vector store
+
+text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+    chunk_size=500, chunk_overlap=50
+)
+
+doc_splits = text_splitter.split_documents(store_docs)
+```
+
+We can run a similarity search query directly:
+
+```python
+results = vectorstore.similarity_search("What is the capital of California?", k=1)
+print(results)
+==========================
+### RESULTS ###
+[Document(id='13c6ff6f-2883-484e-9669-4c904d5ff92e',
+metadata={'filename': 'major-cities-california.txt'},
+page_content='Sacramento: The Capital City\nSacramento, California’s capita
+has a population of 525,000 and is known for its rich history and growing arts
+scene. The city played a pivotal role in the California Gold Rush ...
+```
+
+For our agent to operate autonomously, however, we need to create a retriever tool.
+
+```python
+from langchain.tools.retriever import create_retriever_tool
+from langgraph.prebuilt import ToolNode
+
+retriever = vectorstore.as_retriever(search_kwargs={"k":2})
+
+retriever_tool = create_retriever_tool(
+    retriever,
+    "retrieve_california_stats",
+    "Search and return information about California.",
+)
+
+# Create tools array for agent
+tools = [retriever_tool]
+
+# Create tools node for graph
+tools_node = ToolNode(tools)
+```
+
+Then if we pass this as the tools for our ReAct agent from the [first part of this series](/tutorials/langgraph-agents), we have a functioning RAG agent. We don’t have to remove our other tools either. The agent decides whether to retrieve information from the data store or search the web, or even both. The tool descriptions (e.g. `"Search and return information about California."`) are therefore very important for this.
+<br />
+The full code can be found here: [Basic RAG Agent](https://github.com/lchavasse/langgraph-tutorial/blob/ed1c45b44ead4c0862cf0eee973a84a110413b48/basic-rag-agent.py)
+
+![LangGraph RAG Agent](/images/langgraph-tool-agent.png)
+
+This agents operates entirely autonomously. We have not changed the graph from the previous tutorial. The agent assess the response from the tool call and decides if it should make further calls before returning a final answer to the user.
+<br />
+The [next tutorial](https://young-butter-33a.notion.site/Controlling-Multiple-Agents-17b0a140a52280c5a913f580eaaec384) will look at how to achieve finer control of the nodes and edges of your graph as part of a **multi-agent** system. 
+<br />
+But first, we need to talk about [**LangSmith**](https://young-butter-33a.notion.site/LangSmith-Debugging-Made-Easy-17e0a140a522808b91aae08ee2c7e26b)

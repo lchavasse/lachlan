@@ -3,6 +3,8 @@ title: "Why LangGraph?"
 date: "2025-01-02"
 description: "Why LangGraph?"
 ---
+There are numerous libraries and frameworks designed to streamline the process of building an agent. Although not necessary, they help speed up reliable development of agentic systems. We have chosen [LangGraph](https://www.langchain.com/langgraph) for its combination of usability, flexibility and prevalence in open-source code.
+
 <div style={{ display: 'flex', alignItems: 'center' }}>
   <img src="/images/langgraph-tool-agent.png" alt="LangGraph Agent" style={{ width: '50%', marginRight: '10px' }} />
   <span>LangGraph provides a way to visualise agents as <a href="https://en.wikipedia.org/wiki/State_diagram">state graphs</a>. This makes designing and debugging complex multi-agent systems remarkably simple. Using the prebuilt functions, it is easy to setup a basic ReAct agent in just a few lines of code (below). However, the framework is highly customisable, allowing for rapid development of modular agentic systems.</span>
@@ -33,11 +35,12 @@ agent.invoke({"messages": [("user", "what is the weather in sf")]})
   AIMessage(content="Based on the current search results, here's the weather in San Francisco:\n🌞 Temperature: Around 51°F (11°C)\n☀️ Conditions: Sunny/Partly cloudy\n🌡️ Expected High: Around 60°F\n🌙 Expected Low: Around 45°F\n\nThe weather looks pleasant today - sunny with mild temperatures. It should be a nice day in San Francisco! Remember that weather can change, so it's always good to check a local forecast for the most up-to-date information.", additional_kwargs={}, response_metadata={'id': 'msg_01VwDAmwVHbsVMVbMy8jcm39', 'model': 'claude-3-5-haiku-20241022', 'stop_reason': 'end_turn', 'stop_sequence': None, 'usage': {'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 1578, 'output_tokens': 126}}, id='run-57b19ca1-0501-434c-8247-dcf29f5219ef-0', usage_metadata={'input_tokens': 1578, 'output_tokens': 126, 'total_tokens': 1704, 'input_token_details': {'cache_read': 0, 'cache_creation': 0}})]}"""
 ```
 
-LangGraph agents are built with the same components as LangChain. It is only when building the nodes and edges of the graph from these components that things start to differ. In the imports for this tutorial you will find we use models and tools from LangChain and graph and state (/memory) imports from LangGraph.
+LangGraph agents are built with the same components as [LangChain](https://www.langchain.com/). It is only when building the nodes and edges of the graph from these components that things start to differ. It is the decision loops on the graph that give it it’s strength. In the imports for this tutorial you will find we use models and tools from LangChain and graph and state (/memory) imports from LangGraph.
+<br />
 
 Another great strength of the LangGraph system is [LangSmith](https://smith.langchain.com/). By adding 4 env variables you get automated monitoring of your agents making debugging a breeze.
-
-See also: https://langchain-ai.github.io/langgraph/concepts/high_level/
+<br />
+See also: [LangGraph Concepts](https://langchain-ai.github.io/langgraph/concepts/high_level/)
 
 ---
 
@@ -60,5 +63,5 @@ The outline of the course is:
 ### Postscript
 
 *The other compelling library as of January 2025 is Hugging Face [smolagents](https://huggingface.co/docs/smolagents/en/index). It is very simple and easy to build, but at this time I found it significantly slower, and the lack of customisability made this more challenging to fix.*
-
+<br />
 *If you have training data to refine your agent, you could also consider [DSPy](https://dspy.ai/) which has built in prompt optimisation.*
