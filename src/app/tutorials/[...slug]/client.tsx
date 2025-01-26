@@ -11,21 +11,22 @@ interface BlogPostClientProps {
     date: string
   }
   slug: string
+  folder: string
 }
 
-export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) {
+export default function BlogPostClient({ metadata, slug, folder }: BlogPostClientProps) {
   const components = useMDXComponents({});
   const [PostContent, setPostContent] = useState<React.FC | null>(null);
 
   useEffect(() => {
-    import(`../posts/${slug}.mdx`)
+    import(`../posts/${folder}/${slug}.mdx`)
       .then((module) => {
         setPostContent(() => module.default);
       })
       .catch((err) => {
         console.error('Error loading post:', err);
       });
-  }, [slug]);
+  }, [slug, folder]);
 
   return (
     <div className="min-h-screen relative">
@@ -41,7 +42,7 @@ export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) 
       <div className="relative z-10">
         {/* Navigation */}
         <nav className="p-6 flex justify-between items-center">
-          <Link href="/" className="text-white hover:opacity-80 transition-opacity">
+          <Link href="/tutorials" className="text-white hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded flex items-center justify-center">
               △
             </div>
@@ -79,4 +80,4 @@ export default function BlogPostClient({ metadata, slug }: BlogPostClientProps) 
       </div>
     </div>
   )
-}
+} 

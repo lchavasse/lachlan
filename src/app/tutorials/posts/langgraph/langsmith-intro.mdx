@@ -1,0 +1,24 @@
+---
+title: What is LangSmith?
+date: 2025-01-05
+description: What is LangSmith? Debugging made easy.
+---
+
+It is time we talked about the third piece of the Lang- Holy Trinity, [LangSmith](https://smith.langchain.com/)
+
+LangSmith takes the debugging process out of the command line and into an easy to use UI.
+
+![Screenshot 2025-01-17 at 12.35.38.png](/images/langsmith.png)
+
+LangGraph events are logged automatically. Just signup for an API key and add the following to your .env file:
+
+```python
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+LANGSMITH_API_KEY="lsv2_pt_XXXXXX"
+LANGSMITH_PROJECT="langgraph-tutorial"
+```
+
+That’s it! Just run the agent from the [previous tutorial](/tutorials/langgraph/rag-agent) and you can track the workflow.
+
+Now lets use this whilst building a [multi-agent system](/tutorials/langgraph/multi-agent-system).

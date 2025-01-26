@@ -1,6 +1,6 @@
 ---
 title: "Building a RAG Agent with Langgraph"
-date: "2025-01-25"
+date: "2025-01-04"
 description: "Building a RAG Agent with Langgraph"
 ---
 
@@ -131,14 +131,14 @@ tools = [retriever_tool]
 tools_node = ToolNode(tools)
 ```
 
-Then if we pass this as the tools for our ReAct agent from the [first part of this series](/tutorials/langgraph-agents), we have a functioning RAG agent. We don’t have to remove our other tools either. The agent decides whether to retrieve information from the data store or search the web, or even both. The tool descriptions (e.g. `"Search and return information about California."`) are therefore very important for this.
+Then if we pass this as the tools for our ReAct agent from the [first part of this series](/tutorials/langgraph/react-agent), we have a functioning RAG agent. We don’t have to remove our other tools either. The agent decides whether to retrieve information from the data store or search the web, or even both. The tool descriptions (e.g. `"Search and return information about California."`) are therefore very important for this.
 <br />
-The full code can be found here: [Basic RAG Agent](https://github.com/lchavasse/langgraph-tutorial/blob/ed1c45b44ead4c0862cf0eee973a84a110413b48/basic-rag-agent.py)
+The full code can be found here: [Basic RAG Agent](https://github.com/lchavasse/langgraph-tutorial/blob/main/basic_rag_agent.py)
 
 ![LangGraph RAG Agent](/images/langgraph-tool-agent.png)
 
 This agents operates entirely autonomously. We have not changed the graph from the previous tutorial. The agent assess the response from the tool call and decides if it should make further calls before returning a final answer to the user.
 <br />
-The [next tutorial](https://young-butter-33a.notion.site/Controlling-Multiple-Agents-17b0a140a52280c5a913f580eaaec384) will look at how to achieve finer control of the nodes and edges of your graph as part of a **multi-agent** system. 
+The [next tutorial](/tutorials/langgraph/multi-agent-system) will look at how to achieve finer control of the nodes and edges of your graph as part of a **multi-agent** system. 
 <br />
-But first, we need to talk about [**LangSmith**](https://young-butter-33a.notion.site/LangSmith-Debugging-Made-Easy-17e0a140a522808b91aae08ee2c7e26b)
+But first, we need to talk about [**LangSmith**](/tutorials/langgraph/langsmith)

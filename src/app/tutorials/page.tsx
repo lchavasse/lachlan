@@ -3,8 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-async function getBlogPosts() {
-  const postsDirectory = path.join(process.cwd(), 'src/app/tutorials/posts')
+async function getBlogPosts(folder: string) {
+  const postsDirectory = path.join(process.cwd(), `src/app/tutorials//posts/${folder}`)
   const fileNames = fs.readdirSync(postsDirectory)
   
   const posts = fileNames
@@ -29,7 +29,7 @@ async function getBlogPosts() {
 }
 
 export default async function BlogPage() {
-  const posts = await getBlogPosts()
+  const langgraphPosts = await getBlogPosts('langgraph')
   
   return (
     <div className="min-h-screen relative">
@@ -66,10 +66,10 @@ export default async function BlogPage() {
             </p>
             
             <div className="space-y-2 flex flex-col gap-2 max-w-2xl ml-6">
-              {posts.map((post, index) => (
+              {langgraphPosts.map((post, index) => (
                 <Link 
                   key={post.slug}
-                  href={`/tutorials/${post.slug}`}
+                  href={`/tutorials/langgraph/${post.slug}`}
                   className="block group"
                 >
                   <article className="pl-4 p-1 rounded-lg backdrop-blur-sm hover:bg-white/10 transition-colors border border-white/10 flex gap-6 items-bottom">
@@ -90,7 +90,7 @@ export default async function BlogPage() {
                 </Link>
               ))}
               
-              {posts.length === 0 && (
+              {langgraphPosts.length === 0 && (
                 <p className="text-white/80 italic">
                   No tutorials yet. Check back soon!
                 </p>

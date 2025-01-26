@@ -1,0 +1,154 @@
+---
+title: Multi-Agent System
+date: 2025-01-06
+description: Multi-Agent System
+---
+
+# Controlling Multiple Agents
+
+In order to build multi-agent systems, it is helpful to take back some extra control from LangGraph. In order to do this, we shall use the [`Command`](https://langchain-ai.github.io/langgraph/concepts/low_level/#command) object to return both a state update and a control flow from our nodes. The latter replaces the *conditional edges* in the earlier examples.
+
+(*I believe LangGraph are shifting away from the conditional edges and router syntax. The advantage of doing so is you don’t have to define custom routers that parse the llm output from the previous node.*)
+
+`Command` takes two key values.
+
+```python
+return Command(
+        update={ # update variables in the state
+            "messages": [HumanMessage(content = response["message"], name = "supervisor")]
+        },
+        goto=goto, # set edge to next node
+    )
+```
+
+Naturally we need to implement a router to decide what node to go to. We are going to use the [`.with_strcutured_output()`](https://python.langchain.com/docs/how_to/structured_output/) method on our llm to force this structured output (*This is just [function calling](https://www.datacamp.com/tutorial/open-ai-function-calling-tutorial) under the hood*). We will use a `TypedDict` to specify the output:
+
+```python
+members = ["RAG Agent"]
+options = members + ["FINISH"]
+
+class SupervisorRouter(TypedDict):
+    """Worker to route to next. If no workers needed, route to FINISH."""
+    message: str
+    next: Literal[*options]
+```
+
+---
+
+Thus we create a supervisor agent that determines the worker agent to call. The worker agent then operates in it’s own state, returning only a final response to the supervisor. The supervisor can then decide if it is happy with the response, or needs to call another) or repeated agent.
+
+```python
+def supervisor_agent(state: State) -> Command[Literal[*members, "__end__"]]:
+    messages = state["messages"]
+    sys_prompt = PromptTemplate(
+        template="""You are a supervisor for a team of agents.
+        First you will receive a user query. You must decide which agents to use to answer the user query.
+        You have the following agents: {members} \n\n
+
+        You should pass the query to the agent that you specify with the "next" field.
+        You should also announce what you are doing to the user. \n\n
+
+        When you receive a response from the agents, you should decide if you are happy with the response.
+        If you are, you should give a short summary of the response to the user and terminate the conversation by passing "FINISH" to the "next" field.
+        If you are not happy with the response, you should amend your query to the agent and call them again. \n\n
+
+        The messages are as follows:
+        {messages}
+    """,
+        input_variables=["members", "messages"],
+    )
+
+    chain = sys_prompt | llm.with_structured_output(SupervisorRouter)
+
+    response = chain.invoke({"members": members, "messages": messages})
+
+    goto = response["next"]
+    if goto == "FINISH":
+        goto = END
+
+    return Command(
+        update={
+            "messages": [HumanMessage(content = response["message"], name = "supervisor")]
+        },
+        goto=goto,
+    )
+```
+
+So, what are our members? To start with we’re going to use our RAG agent from the previous tutorial as a single member agent. Build the graph in another file, and then import it to the [`main.py`](http://main.py) file. We create a node to run `graph.invoke` . The RAG agent only returns it’s final response back to the state and ALWAYS returns to the supervisor.
+
+```python
+from rag_agent.py import rag_graph
+
+def rag_agent(state: State) -> Command[Literal["supervisor"]]:
+
+    response = rag_graph.invoke(state)
+
+    return Command(
+        update={
+            "messages": [HumanMessage(content=response["messages"][-1].content, name="rag")]
+        },
+        goto="supervisor",
+    )
+```
+
+Now when we build the graph, we do not include conditional edges as these are defined by `Command` . The only edge required is to start the graph:
+
+```python
+builder = StateGraph(State)
+
+builder.add_node("supervisor", supervisor_agent)
+builder.add_node("RAG Agent", rag_agent)
+
+builder.add_edge(START, "supervisor")
+
+graph = builder.compile(checkpointer=memory)
+```
+
+![Supervisor Agent](/images/multi-agent-1.png)
+
+This does appear to be prone to looping so we’re going to clean things up a bit, and separate out user and query messages.
+
+---
+
+The big change is to the state of the system (below). The idea being that we can separate out the conversation with the user from that between the supervisor / assistant and the worker agents. This improves the flow of conversation with the user, and gives a clear indication when a task has been completed and the graph terminated.
+
+```python
+class State(TypedDict):
+    user_messages: Annotated[list, add_messages] # The conversation between the user and the assistant
+    ai_messages: Annotated[list, add_messages] # The conversation between the assistant and the worker
+    query: str # The query to the worker
+    task_completed: bool # Whether the worker has completed the task
+```
+<div style={{ display: 'flex', alignItems: 'center' }}>
+  <img src="/images/multi-agent-2.png" alt="Supervisor Network" style={{ width: '30%', marginRight: '25px' }} />
+  <div>
+    <span>In addition, I added a final answer node, that could present the results back to the user in a longer form. This allows the supervisor to only return a brief overview to the user.</span>
+    <br />
+    <span>This structure would work as an excellent research tool. A brief conversation starts with the supervisor to define the query parameters which are then passed to the research assistant (rag) - once a satisfactory answer is reached the research is passed to a writer to present it neatly to the user.</span>
+    <br />
+    <span>In the next tutorial I turn this into a voice assistant, using <a href="https://livekit.io/">LiveKit</a>. This brief conversation with the supervisor, separated from a more comprehensive report lends itself well to this.</span>
+  </div>
+</div>
+
+
+
+
+
+
+
+The full code can be found here: [Multi Agent System](https://github.com/lchavasse/langgraph-tutorial/blob/main/multi_agent_example.py)
+
+---
+
+### Some helpful resources:
+
+Old, but great video: [LangGraph: Multi Agent Workflows](https://blog.langchain.dev/langgraph-multi-agent-workflows/)
+
+
+### Guides:
+
+[LangGraph: Multi Agent Systems](https://langchain-ai.github.io/langgraph/concepts/multi_agent/)
+
+[LangGraph: How to Build a Multi-Agent Network](https://langchain-ai.github.io/langgraph/how-tos/multi-agent-network/#using-with-a-prebuilt-react-agent)
+
+[LangGraph: How to Implement Handoffs between Agents](https://langchain-ai.github.io/langgraph/how-tos/agent-handoffs/#implement-handoffs-using-command)

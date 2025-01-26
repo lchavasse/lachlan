@@ -6,7 +6,7 @@ description: "Getting Started with Langgraph Agents"
 
 Our first “agent” will be a simple system where an LLM can chose to call one (or more) tools in order to answer the user’s query. (think ChatGPT searching the web). The response is then assessed by the same LLM to decide if the information is relevant and respond to the user.
 
-As outlined [earlier](https://www.lachlan.xyz/tutorials/why-langgraph), we shall be building our system in Python with LangGraph. Familiarity with Python, therefore, is important.
+As outlined [earlier](/tutorials/langgraph/why-langgraph), we shall be building our system in Python with LangGraph. Familiarity with Python, therefore, is important.
 
 ---
 
@@ -276,13 +276,13 @@ We simple add this to our tools array and the agent will choose which tool to us
 llm_with_tools = llm.bind_tools(tools)
 ```
 
-The full code for the agent can be found here: [Basic ReAct Agent](https://github.com/lchavasse/langgraph-tutorial/blob/aa3203c89ac28f8a56935c4a2e6c6ad2f32467ee/basic-ReAct-agent.py)
+The full code for the agent can be found here: [Basic ReAct Agent](https://github.com/lchavasse/langgraph-tutorial/blob/main/basic_react_agent.py)
 
 <br />
 
 ## Mastered the ReAct Agent?
 
-Let’s step things up by giving out agent a data store - [RAG Agent](https://www.lachlan.xyz/tutorials/rag-agent-langgraph).
+Let’s step things up by giving out agent a data store - [RAG Agent](/tutorials/langgraph/rag-agent).
 
 ---
 

@@ -8,14 +8,22 @@ import BlogPostClient from './client'
 // Generate static parameters for pre-rendering
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), 'src/app/tutorials/posts')
-  const fileNames = fs.readdirSync(postsDirectory)
-
-  // Extract slugs from file names
-  return fileNames
-    .filter((fileName) => fileName.endsWith('.mdx'))
-    .map((fileName) => ({
-      slug: fileName.replace(/\.mdx$/, ''), // Remove the `.mdx` extension
-    }))
+  const folders = fs.readdirSync(postsDirectory)
+  
+  const params = []
+  for (const folder of folders) {
+    const folderPath = path.join(postsDirectory, folder)
+    if (fs.statSync(folderPath).isDirectory()) {
+      const fileNames = fs.readdirSync(folderPath)
+      params.push(...fileNames
+        .filter((fileName) => fileName.endsWith('.mdx'))
+        .map((fileName) => ({
+          slug: [folder, fileName.replace(/\.mdx$/, '')],
+        })))
+    }
+  }
+  
+  return params
 }
 
 // Ensure dynamic params are disabled for full static generation
@@ -26,11 +34,10 @@ interface Frontmatter {
   date: string;
 }
 
-
 // The page component for rendering a specific post
-export default async function Page(props: any) {
-  const slug = props.params.slug
-  const filePath = path.join(process.cwd(), 'src/app/tutorials/posts', `${slug}.mdx`)
+export default async function Page({ params }: { params: { slug: string[] } }) {
+  const [folder, slug] = params.slug
+  const filePath = path.join(process.cwd(), `src/app/tutorials/posts/${folder}/${slug}.mdx`)
   const fileContents = fs.readFileSync(filePath, 'utf8')
 
   // Use `gray-matter` to parse frontmatter and content
@@ -38,7 +45,7 @@ export default async function Page(props: any) {
 
   return (
     <div>
-      <BlogPostClient metadata={data} slug={slug} />
+      <BlogPostClient metadata={data} slug={slug} folder={folder} />
     </div>
   )
-}
+} 
