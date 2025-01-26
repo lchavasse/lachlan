@@ -35,8 +35,13 @@ interface Frontmatter {
 }
 
 // The page component for rendering a specific post
-export default async function Page({ params }: { params: { slug: string[] } }) {
-  const [folder, slug] = params.slug
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>
+}): Promise<React.JSX.Element> {
+  const resolvedParams = await params
+  const [folder, slug] = resolvedParams.slug
   const filePath = path.join(process.cwd(), `src/app/tutorials/posts/${folder}/${slug}.mdx`)
   const fileContents = fs.readFileSync(filePath, 'utf8')
 
