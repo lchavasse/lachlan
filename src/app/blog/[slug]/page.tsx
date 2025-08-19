@@ -28,7 +28,8 @@ interface Frontmatter {
 
 // The page component for rendering a specific post
 export default async function Page(props: any) {
-  const slug = props.params.slug
+  const params = await props.params
+  const slug = params.slug
   const filePath = path.join(process.cwd(), 'src/app/blog/posts', `${slug}.mdx`)
   const fileContents = fs.readFileSync(filePath, 'utf8')
 
