@@ -20,7 +20,12 @@ async function getBlogPosts() {
         slug: fileName.replace(/\.mdx$/, ''),
         title: metadata.title,
         date: metadata.date,
-        description: metadata.description,
+        description: metadata.description || '',
+        readingTime: metadata.readingTime || '',
+        keywords: metadata.keywords || [],
+        author: metadata.author || '',
+        image: metadata.image || '',
+        imageAlt: metadata.imageAlt || '',
       }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -78,10 +83,15 @@ export default async function BlogPage() {
                         month: 'long',
                         day: 'numeric'
                       })}
+                      {post.readingTime && (
+                        <span className="ml-2 text-white/60">• {post.readingTime}</span>
+                      )}
                     </p>
-                    <p className="text-white/80 italic">
-                      {post.description}
-                    </p>
+                    {post.description && (
+                      <p className="text-white/80 italic">
+                        {post.description}
+                      </p>
+                    )}
                   </article>
                 </Link>
               ))}

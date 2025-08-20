@@ -16,27 +16,18 @@ const plugins = [];
 
 /** @type {NextConfig} */
 const nextConfig = {
-  output: 'export',
   cleanDistDir: true,
   reactStrictMode: true,
   poweredByHeader: false,
   pageExtensions: ['md', 'mdx', 'tsx', 'ts', 'jsx', 'js'],
-  images: {
-    unoptimized: true
-  },
   env: {
     NEXT_TELEMETRY_DISABLED: '1',
   },
-  // Exclude admin routes from static export
+  // Admin routes will work automatically on Vercel
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
   distDir: '.next',
-  // This will exclude the admin routes from being statically generated
   excludeDefaultMomentLocales: true,
-  experimental: {
-    // This excludes specific routes from static generation
-    excludeRoutes: ['/admin', '/admin/editor']
-  }
 };
 
 /** @type {import('rehype-pretty-code').Options} */
