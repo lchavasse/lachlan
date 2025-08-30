@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = `${data.title} | Lachlan Chavasse`
   const description = data.description || 'A blog post by Lachlan Chavasse'
-  const image = data.image ? `https://lachlanchavasse.com${data.image}` : undefined
+  const image = data.image ? `https://lachlan.xyz${data.image}` : undefined
 
   return {
     title,

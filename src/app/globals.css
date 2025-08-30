@@ -165,3 +165,11 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 code[data-line-numbers-max-digits="4"] > [data-line]::before {
   width: 2.25rem;
 }
+
+/* Line clamp utilities */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
