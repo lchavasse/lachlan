@@ -150,8 +150,8 @@ export default function Component() {
                     Operator. Creator. Innovator.
                   </p>
                   <p className="text-white/80 italic">
-                    Curating choice in the age of AI @ daily. <br />
-                    Building custom AI tools to help individuals and businesses.
+                    Helping overwhelmed entrepreneurs go from chaos to clarity @ useDaily <br />
+                    Building custom AI tools to help individuals and businesses succeed.
                   </p>
                 </div>
               </Block>
@@ -167,9 +167,9 @@ export default function Component() {
               {/* Daily */}
               <Block>
                 <a href="https://daily.lachlan.xyz/" target="_blank" rel="noopener noreferrer">
-                  <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">daily.</h2>
+                  <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">useDaily</h2>
                   <p className="text-white/80 italic">
-                    An AI powered diary that helps you reflect, learn, and grow.
+                    An AI coach that helps you set and achieve your goals.
                   </p>
                 </a>
               </Block>

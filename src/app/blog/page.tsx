@@ -67,7 +67,7 @@ export default async function BlogPage() {
                 </span>
               </h1>
               <p className="text-white/90 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-                Thoughts on product, technology, and building the future
+                Thoughts on Product, Technology, and Building the Future
               </p>
             </div>
           </div>
